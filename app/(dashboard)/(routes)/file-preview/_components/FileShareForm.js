@@ -8,8 +8,11 @@ const FileShareForm = ({ file, onPasswordSave }) => {
   const [ispasswordEnable, setIsPasswordEnable] = useState(false);
   const [password, setpassword] = useState("");
   const [email, setEmail] = useState();
+  const [copied, setCopied] = useState(false);
 
   const { user } = useUser();
+
+  const whatsappText = "123456 ";
 
   const sendEmail = () => {
     const data = {
@@ -26,13 +29,15 @@ const FileShareForm = ({ file, onPasswordSave }) => {
   };
   const onCopyClick = () => {
     navigator.clipboard.writeText(file.shorturl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
   return (
     file && (
       <div className="flex flex-col gap-2">
         <div>
           <label className="text-[14px] text-gray-500">show</label>
-          <div className="flex gap-5 p-2 border rounded-md">
+          <div className="flex gap-5 p-2 border rounded-md relative">
             <input
               type="text"
               value={file.shorturl}
@@ -40,9 +45,14 @@ const FileShareForm = ({ file, onPasswordSave }) => {
               className="disabled:text-gray-500 w-full bg-green outline-none"
             />
             <Copy
-              className="text-gray-400 hover:text-gray-700"
+              className="text-gray-400 hover:text-gray-700 cursor-pointer"
               onClick={() => onCopyClick()}
             />
+            {copied && (
+              <div className="notification absolute -top-10 bg-gray-200 px-3 py-1 rounded-lg left-[90%]  px-">
+                Copied!
+              </div>
+            )}
           </div>
           <div className="gap-3 flex mt-5">
             <input
@@ -69,7 +79,7 @@ const FileShareForm = ({ file, onPasswordSave }) => {
               </button>
             </div>
           ) : null}
-          <div className="border rounded=md p-3 mt-5">
+          {/* <div className="border rounded=md p-3 mt-5">
             <label className="text-[14px] text-gray-800">
               Send File to Email
             </label>
@@ -89,7 +99,15 @@ const FileShareForm = ({ file, onPasswordSave }) => {
             >
               Send Email
             </button>
-          </div>
+          </div> */}
+          <a
+            href={`whatsapp://send?text=${whatsappText}`}
+            data-action="share/whatsapp/share"
+            target="_blank"
+          >
+            {" "}
+            Share to WhatsApp{" "}
+          </a>
         </div>
       </div>
     )
