@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import AlertMsg from "./AlertMsg";
 import FilePreview from "./FilePreview";
 import ProgressBar from "./ProgressBar";
+import { Cross } from "lucide-react";
 
 function UploadForm({ uploadBtnClick, progress }) {
   const [file, setFile] = useState();
@@ -58,9 +59,12 @@ function UploadForm({ uploadBtnClick, progress }) {
       {file ? (
         <FilePreview file={file} removeFile={() => setFile(null)} />
       ) : null}
-
       {progress ? (
-        <ProgressBar progress={progress} />
+        progress == 100 ? (
+          <Loader />
+        ) : (
+          <ProgressBar progress={progress} />
+        )
       ) : (
         <button
           disabled={!file}
@@ -73,5 +77,25 @@ function UploadForm({ uploadBtnClick, progress }) {
     </div>
   );
 }
+
+export const Loader = () => {
+  return (
+    <div>
+      <div className="mt-5 h-auto flex flex-col bg-white border shadow-sm rounded-xl">
+        <div className="flex flex-auto flex-col justify-center items-center p-4 md:p-5">
+          <div className="flex justify-center">
+            <div
+              className="animate-spin inline-block size-6 border-[3px] border-current border-t-transparent text-blue-600 rounded-full"
+              role="status"
+              aria-label="loading"
+            >
+              <span className="sr-only">Loading...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default UploadForm;

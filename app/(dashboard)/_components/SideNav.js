@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
-const SideNav = () => {
+const SideNav = ({ menu, toggleMenu }) => {
   const menuList = [
     {
       id: 1,
@@ -31,7 +31,7 @@ const SideNav = () => {
   const router = useRouter();
 
   return (
-    <div className="shadow-sm border-r h-full">
+    <div className="shadow-sm border-r h-full ">
       <div className="p-5 border-b ">
         <Image src="/logo.svg" width={150} height={100} alt="logo" />
       </div>
@@ -45,6 +45,7 @@ const SideNav = () => {
             onClick={() => {
               setActiveIndex(index);
               router.push(item.path);
+              if (toggleMenu) toggleMenu();
             }}
           >
             <item.icon />
@@ -52,6 +53,12 @@ const SideNav = () => {
           </button>
         ))}
       </div>
+      <h1
+        className="text-right fone-semibold text-gray-600 p-5 mt-5 md:hidden"
+        onClick={toggleMenu}
+      >
+        Close
+      </h1>
     </div>
   );
 };
