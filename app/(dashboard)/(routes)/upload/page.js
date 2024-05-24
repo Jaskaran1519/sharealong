@@ -26,18 +26,38 @@ const upload = () => {
       contentType: file.type,
     };
     const storageRef = ref(storage, "file-upload/" + file?.name);
-    const uploadTask = uploadBytesResumable(storageRef, file, file.type);
-    uploadTask.on("state_changed", (snapshot) => {
-      // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-      const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-      console.log("Upload is " + progress + "% done");
-      setProgress(progress);
-      progress == 100 &&
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          console.log("File available at", downloadURL);
-          saveInfo(file, downloadURL);
-        });
-    });
+    const uploadTask = uploadBytesResumable(storageRef, file, metadata);
+
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        console.log("Upload is " + progress + "% done");
+        setProgress(progress);
+
+        if (progress === 100) {
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            console.log("File available at", downloadURL);
+            saveInfo(file, downloadURL); // Assuming saveInfo is a function to save the file information
+          });
+        }
+      },
+      (error) => {
+        // Handle unsuccessful uploads
+        console.error("Upload failed:", error);
+        setErrorMessage("Upload failed: " + error.message);
+      }
+    );
+  };
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setErrorMessage(""); // Clear any previous error messages
+      uploadFile(file);
+    }
   };
 
   const saveInfo = async (file, fileUrl) => {
